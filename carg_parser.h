@@ -88,6 +88,9 @@ int ap_code( const struct Arg_parser * const ap, const int i );
 
 const char * ap_argument( const struct Arg_parser * const ap, const int i );
 
+char add_error( struct Arg_parser * const ap, const char * const msg );
+void * ap_resize_buffer( void * buf, const int min_size );
+void free_data( struct Arg_parser * const ap );
 #ifdef __cplusplus
 }
 #endif

@@ -24,7 +24,7 @@
 
 
 /* assure at least a minimum size for buffer 'buf' */
-static void * ap_resize_buffer( void * buf, const int min_size )
+void * ap_resize_buffer( void * buf, const int min_size )
   {
   if( buf ) buf = realloc( buf, min_size );
   else buf = malloc( min_size );
@@ -53,7 +53,7 @@ static char push_back_record( struct Arg_parser * const ap,
   }
 
 
-static char add_error( struct Arg_parser * const ap, const char * const msg )
+char add_error( struct Arg_parser * const ap, const char * const msg )
   {
   const int len = strlen( msg );
   void * tmp = ap_resize_buffer( ap->error, ap->error_size + len + 1 );
@@ -65,7 +65,7 @@ static char add_error( struct Arg_parser * const ap, const char * const msg )
   }
 
 
-static void free_data( struct Arg_parser * const ap )
+void free_data( struct Arg_parser * const ap )
   {
   int i;
   for( i = 0; i < ap->data_size; ++i ) free( ap->data[i].argument );
