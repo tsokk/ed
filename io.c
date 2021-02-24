@@ -34,13 +34,13 @@ void reset_unterminated_line( void ) { unterminated_line = 0; }
 void unmark_unterminated_line( const line_t * const lp )
   { if( unterminated_line == lp ) unterminated_line = 0; }
 
-static bool unterminated_last_line( void )
+bool unterminated_last_line( void )
   { return ( unterminated_line != 0 &&
              unterminated_line == search_line_node( last_addr() ) ); }
 
 
 /* print text to stdout */
-static void print_line( const char * p, int len, const int pflags )
+void print_line( const char * p, int len, const int pflags )
   {
   const char escapes[] = "\a\b\f\n\r\t\v";
   const char escchars[] = "abfnrtv";
@@ -97,7 +97,7 @@ bool print_lines( int from, const int to, const int pflags )
 
 
 /* return the parity of escapes at the end of a string */
-static bool trailing_escape( const char * const s, int len )
+bool trailing_escape( const char * const s, int len )
   {
   bool odd_escape = false;
   while( --len >= 0 && s[len] == '\\' ) odd_escape = !odd_escape;
@@ -187,7 +187,7 @@ const char * get_stdin_line( int * const sizep )
 /* Read a line of text from a stream.
    Returns pointer to buffer and line size (including trailing newline
    if it exists and is not added now) */
-static const char * read_stream_line( const char * const filename,
+const char * read_stream_line( const char * const filename,
                                       FILE * const fp, int * const sizep,
                                       bool * const newline_addedp )
   {
@@ -224,7 +224,7 @@ static const char * read_stream_line( const char * const filename,
 
 /* read a stream into the editor buffer;
    return total size of data read, or -1 if error */
-static long read_stream( const char * const filename, FILE * const fp,
+long read_stream( const char * const filename, FILE * const fp,
                          const int addr )
   {
   line_t * lp = search_line_node( addr );
@@ -298,7 +298,7 @@ int read_file( const char * const filename, const int addr )
 
 
 /* write a range of lines to a stream */
-static long write_stream( const char * const filename, FILE * const fp,
+long write_stream( const char * const filename, FILE * const fp,
                           int from, const int to )
   {
   line_t * lp = search_line_node( from );

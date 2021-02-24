@@ -77,7 +77,7 @@ void set_verbose( void ) { verbose = true; }
 static const line_t * mark[26];			/* line markers */
 static int markno;				/* line marker count */
 
-static bool mark_line_node( const line_t * const lp, int c )
+bool mark_line_node( const line_t * const lp, int c )
   {
   c -= 'a';
   if( c < 0 || c >= 26 ) { set_error_msg( inv_mark_ch ); return false; }
@@ -97,7 +97,7 @@ void unmark_line_node( const line_t * const lp )
 
 
 /* return address of a marked line */
-static int get_marked_node_addr( int c )
+int get_marked_node_addr( int c )
   {
   c -= 'a';
   if( c < 0 || c >= 26 ) { set_error_msg( inv_mark_ch ); return -1; }
@@ -106,7 +106,7 @@ static int get_marked_node_addr( int c )
 
 
 /* Returns pointer to copy of shell command in the command buffer */
-static const char * get_shell_command( const char ** const ibufpp )
+const char * get_shell_command( const char ** const ibufpp )
   {
   static char * buf = 0;		/* temporary buffer */
   static int bufsz = 0;
@@ -154,7 +154,7 @@ static const char * get_shell_command( const char ** const ibufpp )
   }
 
 
-static const char * skip_blanks( const char * p )
+const char * skip_blanks( const char * p )
   {
   while( isspace( (unsigned char)*p ) && *p != '\n' ) ++p;
   return p;
@@ -162,7 +162,7 @@ static const char * skip_blanks( const char * p )
 
 
 /* Returns pointer to copy of filename in the command buffer */
-static const char * get_filename( const char ** const ibufpp,
+const char * get_filename( const char ** const ibufpp,
                                   const bool traditional_f_command )
   {
   static char * buf = 0;
@@ -191,7 +191,7 @@ static const char * get_filename( const char ** const ibufpp,
 
 
 /* convert a string to int with out_of_range detection */
-static bool parse_int( int * const i, const char * const str,
+bool parse_int( int * const i, const char * const str,
                        const char ** const tail )
   {
   char * tmp;
@@ -220,7 +220,7 @@ static bool parse_int( int * const i, const char * const str,
    is seen. Returns the number of addresses read, or -1 if error.
    If no addresses are found, both addresses are set to the current address.
    If one address is found, both addresses are set to that address. */
-static int extract_addresses( const char ** const ibufpp )
+int extract_addresses( const char ** const ibufpp )
   {
   bool first = true;			/* true == addr, false == offset */
 
@@ -300,7 +300,7 @@ static int extract_addresses( const char ** const ibufpp )
 
 
 /* get a valid address from the command buffer */
-static bool get_third_addr( const char ** const ibufpp, int * const addr )
+bool get_third_addr( const char ** const ibufpp, int * const addr )
   {
   const int old1 = first_addr;
   const int old2 = second_addr;
@@ -318,7 +318,7 @@ static bool get_third_addr( const char ** const ibufpp, int * const addr )
 
 
 /* set default range and return true if address range is valid */
-static bool check_addr_range( const int n, const int m, const int addr_cnt )
+bool check_addr_range( const int n, const int m, const int addr_cnt )
   {
   if( addr_cnt == 0 ) { first_addr = n; second_addr = m; }
   if( first_addr < 1 || first_addr > second_addr || second_addr > last_addr() )
@@ -327,13 +327,13 @@ static bool check_addr_range( const int n, const int m, const int addr_cnt )
   }
 
 /* set defaults to current_addr and return true if address range is valid */
-static bool check_addr_range2( const int addr_cnt )
+bool check_addr_range2( const int addr_cnt )
   {
   return check_addr_range( current_addr(), current_addr(), addr_cnt );
   }
 
 /* set default second_addr and return true if second_addr is valid */
-static bool check_second_addr( const int addr, const int addr_cnt )
+bool check_second_addr( const int addr, const int addr_cnt )
   {
   if( addr_cnt == 0 ) second_addr = addr;
   if( second_addr < 1 || second_addr > last_addr() )
@@ -343,7 +343,7 @@ static bool check_second_addr( const int addr, const int addr_cnt )
 
 
 /* verify the command suffixes in the command buffer */
-static bool get_command_suffix( const char ** const ibufpp,
+bool get_command_suffix( const char ** const ibufpp,
                                 int * const pflagsp, int * const snump )
   {
   bool nos_or_rep = !snump;	/* not s command or repeated g/count */
@@ -372,13 +372,13 @@ static bool get_command_suffix( const char ** const ibufpp,
   }
 
 
-static bool unexpected_address( const int addr_cnt )
+bool unexpected_address( const int addr_cnt )
   {
   if( addr_cnt > 0 ) { set_error_msg( "Unexpected address" ); return true; }
   return false;
   }
 
-static bool unexpected_command_suffix( const unsigned char ch )
+bool unexpected_command_suffix( const unsigned char ch )
   {
   if( !isspace( ch ) )
     { set_error_msg( "Unexpected command suffix" ); return true; }
@@ -386,7 +386,7 @@ static bool unexpected_command_suffix( const unsigned char ch )
   }
 
 
-static bool command_s( const char ** const ibufpp, int * const pflagsp,
+bool command_s( const char ** const ibufpp, int * const pflagsp,
                        const int addr_cnt, const bool isglobal )
   {
   static int pflags = 0;	/* print suffixes */
@@ -447,12 +447,8 @@ static bool command_s( const char ** const ibufpp, int * const pflagsp,
   return true;
   }
 
-
-static int exec_global( const char ** const ibufpp, const int pflags,
-                        const bool interactive );
-
 /* execute the next command in command buffer; return error status */
-static int exec_command( const char ** const ibufpp, const int prev_status,
+int exec_command( const char ** const ibufpp, const int prev_status,
                          const bool isglobal )
   {
   const char * fnp;				/* filename */
@@ -661,7 +657,7 @@ static int exec_command( const char ** const ibufpp, const int prev_status,
 
 /* Apply command list in the command buffer to the active lines in a range.
    Stop at first error. Return status of last command executed. */
-static int exec_global( const char ** const ibufpp, const int pflags,
+int exec_global( const char ** const ibufpp, const int pflags,
                         const bool interactive )
   {
   static char * buf = 0;
@@ -715,7 +711,7 @@ static int exec_global( const char ** const ibufpp, const int pflags,
   }
 
 
-static void script_error( void )
+void script_error( void )
   {
   if( verbose ) fprintf( stderr, "script, line %d: %s\n", linenum(), errmsg );
   }

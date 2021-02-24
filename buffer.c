@@ -64,12 +64,12 @@ int dec_addr( int addr )
 
 
 /* link next and previous nodes */
-static void link_nodes( line_t * const prev, line_t * const next )
+void link_nodes( line_t * const prev, line_t * const next )
   { prev->q_forw = next; next->q_back = prev; }
 
 
 /* insert line node into circular queue after previous */
-static void insert_node( line_t * const lp, line_t * const prev )
+void insert_node( line_t * const lp, line_t * const prev )
   {
   link_nodes( lp, prev->q_forw );
   link_nodes( prev, lp );
@@ -77,7 +77,7 @@ static void insert_node( line_t * const lp, line_t * const prev )
 
 
 /* add a line node in the editor buffer after the given line */
-static void add_line_node( line_t * const lp )
+void add_line_node( line_t * const lp )
   {
   line_t * const prev = search_line_node( current_addr_ );
   insert_node( lp, prev );
@@ -87,7 +87,7 @@ static void add_line_node( line_t * const lp )
 
 
 /* return a pointer to a copy of a line node, or to a new node if lp == 0 */
-static line_t * dup_line_node( line_t * const lp )
+line_t * dup_line_node( line_t * const lp )
   {
   line_t * const p = (line_t *) malloc( sizeof (line_t) );
   if( !p )

@@ -59,7 +59,7 @@ bool scripted( void ) { return scripted_; }
 bool traditional( void ) { return traditional_; }
 
 
-static void show_help( void )
+void show_help( void )
   {
   printf( "GNU ed is a line-oriented text editor. It is used to create, display,\n"
           "modify and otherwise manipulate text files, both interactively and via\n"
@@ -91,7 +91,7 @@ static void show_help( void )
   }
 
 
-static void show_version( void )
+void show_version( void )
   {
   printf( "GNU %s %s\n", program_name, PROGVERSION );
   printf( "Copyright (C) 1994 Andrew L. Moore.\n"
@@ -112,7 +112,7 @@ void show_strerror( const char * const filename, const int errcode )
   }
 
 
-static void show_error( const char * const msg, const int errcode, const bool help )
+void show_error( const char * const msg, const int errcode, const bool help )
   {
   if( msg && msg[0] )
     fprintf( stderr, "%s: %s%s%s\n", program_name, msg,

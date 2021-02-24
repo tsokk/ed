@@ -40,7 +40,7 @@ bool subst_regex( void ) { return subst_regex_ != 0; }
 
 
 /* translate characters in a string */
-static void translit_text( char * p, int len, const char from, const char to )
+void translit_text( char * p, int len, const char from, const char to )
   {
   while( --len >= 0 )
     {
@@ -51,16 +51,16 @@ static void translit_text( char * p, int len, const char from, const char to )
 
 
 /* overwrite newlines with ASCII NULs */
-static void newline_to_nul( char * const s, const int len )
+void newline_to_nul( char * const s, const int len )
   { translit_text( s, len, '\n', '\0' ); }
 
 /* overwrite ASCII NULs with newlines */
-static void nul_to_newline( char * const s, const int len )
+void nul_to_newline( char * const s, const int len )
   { translit_text( s, len, '\0', '\n' ); }
 
 
 /* expand a POSIX character class */
-static const char * parse_char_class( const char * p )
+const char * parse_char_class( const char * p )
   {
   char c, d;
 
@@ -76,7 +76,7 @@ static const char * parse_char_class( const char * p )
 
 
 /* copy a pattern string from the command buffer; return pointer to the copy */
-static char * extract_pattern( const char ** const ibufpp, const char delimiter )
+char * extract_pattern( const char ** const ibufpp, const char delimiter )
   {
   static char * buf = 0;
   static int bufsz = 0;
@@ -106,7 +106,7 @@ static char * extract_pattern( const char ** const ibufpp, const char delimiter 
 
 /* return pointer to compiled regex from command buffer, or to previous
    compiled regex if empty RE. return 0 if error */
-static regex_t * get_compiled_regex( const char ** const ibufpp,
+regex_t * get_compiled_regex( const char ** const ibufpp,
                                      const bool test_delimiter )
   {
   static regex_t store[2];		/* space for two compiled regexes */
@@ -257,7 +257,7 @@ bool extract_replacement( const char ** const ibufpp, const bool isglobal )
 
 /* Produce replacement text from matched text and replacement template.
    Return new offset to end of replacement text, or -1 if error. */
-static int replace_matched_text( char ** txtbufp, int * const txtbufszp,
+int replace_matched_text( char ** txtbufp, int * const txtbufszp,
                                  const char * const txt,
                                  const regmatch_t * const rm, int offset,
                                  const int re_nsub )
@@ -294,7 +294,7 @@ static int replace_matched_text( char ** txtbufp, int * const txtbufszp,
 
 /* Produce new text with one or all matches replaced in a line.
    Return size of the new line text, 0 if no change, -1 if error */
-static int line_replace( char ** txtbufp, int * const txtbufszp,
+int line_replace( char ** txtbufp, int * const txtbufszp,
                          const line_t * const lp, const int snum )
   {
   enum { se_max = 30 };	/* max subexpressions in a regular expression */

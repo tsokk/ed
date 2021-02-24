@@ -17,6 +17,10 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
+
+#include <regex.h>
+
 #ifndef __cplusplus
 enum Bool { false = 0, true = 1 };
 typedef enum Bool bool;
@@ -89,6 +93,10 @@ void clear_undo_stack( void );
 undo_t * push_undo_atom( const int type, const int from, const int to );
 void reset_undo_state( void );
 bool undo( const bool isglobal );
+void link_nodes( line_t * const prev, line_t * const next );
+void insert_node( line_t * const lp, line_t * const prev );
+void add_line_node( line_t * const lp );
+line_t * dup_line_node( line_t * const lp );
 
 /* defined in global.c */
 void clear_active_list( void );
@@ -107,6 +115,16 @@ int write_file( const char * const filename, const char * const mode,
                 const int from, const int to );
 void reset_unterminated_line( void );
 void unmark_unterminated_line( const line_t * const lp );
+bool unterminated_last_line( void );
+void print_line( const char * p, int len, const int pflags );
+bool trailing_escape( const char * const s, int len );
+const char * read_stream_line( const char * const filename,
+			       FILE * const fp, int * const sizep,
+			       bool * const newline_addedp );
+long read_stream( const char * const filename, FILE * const fp,
+		  const int addr );
+long write_stream( const char * const filename, FILE * const fp,
+		   int from, const int to );
 
 /* defined in main.c */
 bool extended_regexp( void );
@@ -116,6 +134,9 @@ bool restricted( void );
 bool scripted( void );
 void show_strerror( const char * const filename, const int errcode );
 bool traditional( void );
+void show_help( void );
+void show_version( void );
+void show_error( const char * const msg, const int errcode, const bool help );
 
 /* defined in main_loop.c */
 void invalid_address( void );
@@ -125,6 +146,30 @@ void set_error_msg( const char * const msg );
 bool set_prompt( const char * const s );
 void set_verbose( void );
 void unmark_line_node( const line_t * const lp );
+bool mark_line_node( const line_t * const lp, int c );
+int get_marked_node_addr( int c );
+const char * get_shell_command( const char ** const ibufpp );
+const char * skip_blanks( const char * p );
+const char * get_filename( const char ** const ibufpp,
+			   const bool traditional_f_command );
+bool parse_int( int * const i, const char * const str,
+		const char ** const tail );
+int extract_addresses( const char ** const ibufpp );
+bool get_third_addr( const char ** const ibufpp, int * const addr );
+bool check_addr_range( const int n, const int m, const int addr_cnt );
+bool check_addr_range2( const int addr_cnt );
+bool check_second_addr( const int addr, const int addr_cnt );
+bool get_command_suffix( const char ** const ibufpp,
+			 int * const pflagsp, int * const snump );
+bool unexpected_address( const int addr_cnt );
+bool unexpected_command_suffix( const unsigned char ch );
+bool command_s( const char ** const ibufpp, int * const pflagsp,
+		const int addr_cnt, const bool isglobal );
+int exec_global( const char ** const ibufpp, const int pflags,
+                        const bool interactive );
+int exec_command( const char ** const ibufpp, const int prev_status,
+		  const bool isglobal );
+void script_error( void );
 
 /* defined in regex.c */
 bool build_active_list( const char ** const ibufpp, const int first_addr,
@@ -135,6 +180,19 @@ bool search_and_replace( const int first_addr, const int second_addr,
                          const int snum, const bool isglobal );
 bool set_subst_regex( const char ** const ibufpp );
 bool subst_regex( void );
+void translit_text( char * p, int len, const char from, const char to );
+void newline_to_nul( char * const s, const int len );
+void nul_to_newline( char * const s, const int len );
+const char * parse_char_class( const char * p );
+char * extract_pattern( const char ** const ibufpp, const char delimiter );
+regex_t * get_compiled_regex( const char ** const ibufpp,
+			      const bool test_delimiter );
+int replace_matched_text( char ** txtbufp, int * const txtbufszp,
+			  const char * const txt,
+			  const regmatch_t * const rm, int offset,
+			  const int re_nsub );
+int line_replace( char ** txtbufp, int * const txtbufszp,
+		  const line_t * const lp, const int snum );
 
 /* defined in signal.c */
 void disable_interrupts( void );
@@ -145,3 +203,7 @@ void set_window_lines( const int lines );
 const char * strip_escapes( const char * p );
 int window_columns( void );
 int window_lines( void );
+void sighup_handler( int signum );
+void sigint_handler( int signum );
+void sigwinch_handler( int signum );
+int set_signal( const int signum, void (*handler)( int ) );

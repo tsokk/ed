@@ -38,7 +38,7 @@ static bool sighup_pending = false;
 static bool sigint_pending = false;
 
 
-static void sighup_handler( int signum )
+void sighup_handler( int signum )
   {
   if( signum ) {}			/* keep compiler happy */
   if( mutex ) sighup_pending = true;
@@ -68,7 +68,7 @@ static void sighup_handler( int signum )
   }
 
 
-static void sigint_handler( int signum )
+void sigint_handler( int signum )
   {
   if( mutex ) sigint_pending = true;
   else
@@ -83,7 +83,7 @@ static void sigint_handler( int signum )
   }
 
 
-static void sigwinch_handler( int signum )
+void sigwinch_handler( int signum )
   {
 #ifdef TIOCGWINSZ
   struct winsize ws;			/* window size structure */
@@ -99,7 +99,7 @@ static void sigwinch_handler( int signum )
   }
 
 
-static int set_signal( const int signum, void (*handler)( int ) )
+int set_signal( const int signum, void (*handler)( int ) )
   {
   struct sigaction new_action;
 
