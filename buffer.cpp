@@ -89,7 +89,7 @@ void add_line_node( line_t * const lp )
 /* return a pointer to a copy of a line node, or to a new node if lp == 0 */
 line_t * dup_line_node( line_t * const lp )
   {
-  line_t * const p = (line_t *) malloc( sizeof (line_t) );
+  line_t * const p = new line_t[ sizeof (line_t) ];
   if( !p )
     {
     show_strerror( 0, errno );
@@ -151,7 +151,7 @@ static void clear_yank_buffer( void )
     {
     line_t * const p = lp->q_forw;
     link_nodes( lp->q_back, lp->q_forw );
-    free( lp );
+    delete lp;
     lp = p;
     }
   enable_interrupts();
@@ -537,7 +537,7 @@ void clear_undo_stack( void )
         line_t * const lp = bp->q_forw;
         unmark_line_node( bp );
         unmark_unterminated_line( bp );
-        free( bp );
+        delete bp;
         bp = lp;
         }
       }
@@ -564,9 +564,8 @@ undo_t * push_undo_atom( const int type, const int from, const int to )
   if( usize < min_size )
     {
     const int new_size = ( min_size < 512 ? 512 : ( min_size / 512 ) * 1024 );
-    void * new_buf = 0;
-    if( ustack ) new_buf = realloc( ustack, new_size );
-    else new_buf = malloc( new_size );
+    if( ustack ) delete ustack;
+    void * new_buf = new void *[ new_size ];
     if( !new_buf )
       {
       show_strerror( 0, errno );
@@ -574,7 +573,7 @@ undo_t * push_undo_atom( const int type, const int from, const int to )
       if( ustack )
         {
         clear_undo_stack();
-        free( ustack );
+        delete ustack;
         ustack = 0;
         usize = u_ptr = 0;
         u_current_addr = u_last_addr = -1;
