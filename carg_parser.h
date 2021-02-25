@@ -41,10 +41,6 @@
    (without whitespace), or '--<long_option>=<argument>'.
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 enum ap_Has_arg { ap_no, ap_yes, ap_maybe };
 
 struct ap_Option
