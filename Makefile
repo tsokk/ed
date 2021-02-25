@@ -16,9 +16,9 @@ datarootdir = $(prefix)/share
 infodir = $(datarootdir)/info
 mandir = $(datarootdir)/man
 program_prefix = 
-CC = gcc
+CC = g++
 CPPFLAGS = 
-CFLAGS = -Wall -W -O2
+CFLAGS = -Wall
 LDFLAGS = 
 
 DISTNAME = $(pkgname)-$(pkgversion)
@@ -48,10 +48,10 @@ r$(progname) : r$(progname).in
 	cat $(VPATH)/r$(progname).in > $@
 	chmod a+x $@
 
-main.o : main.c
+main.o : main.cpp
 	$(CC) $(CPPFLAGS) $(CFLAGS) -DPROGVERSION=\"$(pkgversion)\" -c -o $@ $<
 
-%.o : %.c
+%.o : %.cpp
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(objs)       : Makefile ed.h
