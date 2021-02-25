@@ -378,7 +378,7 @@ bool search_and_replace( const int first_addr, const int second_addr,
         if( up ) up->tail = search_line_node( current_addr() );
         else
           {
-          up = push_undo_atom( UADD, current_addr(), current_addr() );
+	  up = push_undo_atom( undo_t::UADD, current_addr(), current_addr() );
           if( !up ) { enable_interrupts(); return false; }
           }
         }

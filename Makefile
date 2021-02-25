@@ -17,7 +17,7 @@ infodir = $(datarootdir)/info
 mandir = $(datarootdir)/man
 program_prefix = 
 CC = g++
-CPPFLAGS = -Wall 
+CPPFLAGS = -fpermissive
 CFLAGS =
 LDFLAGS = 
 

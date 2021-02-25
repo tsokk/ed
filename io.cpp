@@ -251,7 +251,7 @@ long read_stream( const char * const filename, FILE * const fp,
     if( up ) up->tail = lp;
     else
       {
-      up = push_undo_atom( UADD, current_addr(), current_addr() );
+      up = push_undo_atom( undo_t::UADD, current_addr(), current_addr() );
       if( !up ) { enable_interrupts(); return -1; }
       }
     enable_interrupts();

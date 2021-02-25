@@ -36,7 +36,7 @@ static int active_ndx = 0;	/* active_list index ( modulo active_last ) */
 void clear_active_list( void )
   {
   disable_interrupts();
-  if( active_list ) free( active_list );
+  if( active_list ) delete active_list;
   active_list = 0;
   active_size = active_len = active_ptr = active_ndx = 0;
   enable_interrupts();
@@ -59,10 +59,9 @@ bool set_active_node( const line_t * const lp )
   if( active_size < min_size )
     {
     const int new_size = ( min_size < 512 ? 512 : ( min_size / 512 ) * 1024 );
-    void * new_buf = 0;
     disable_interrupts();
-    if( active_list ) new_buf = realloc( active_list, new_size );
-    else new_buf = malloc( new_size );
+    if( active_list ) delete active_list;
+    void * new_buf = new void * [ new_size ];
     if( !new_buf )
       {
       show_strerror( 0, errno );

@@ -53,7 +53,7 @@ void sighup_handler( int signum )
       const int len = ( s ? strlen( s ) : 0 );
       const int need_slash = ( ( !len || s[len-1] != '/' ) ? 1 : 0 );
       char * const hup = ( ( len + need_slash + (int)sizeof hb < path_max( 0 ) ) ?
-                    (char *) malloc( len + need_slash + sizeof hb ) : 0 );
+                    new char[ len + need_slash + sizeof hb ] : 0 );
       if( len && hup )			/* hup filename */
         {
         memcpy( hup, s, len );
@@ -151,10 +151,9 @@ bool resize_buffer( char ** const buf, int * const size, const int min_size )
   if( *size < min_size )
     {
     const int new_size = ( min_size < 512 ? 512 : ( min_size / 512 ) * 1024 );
-    void * new_buf = 0;
     disable_interrupts();
-    if( *buf ) new_buf = realloc( *buf, new_size );
-    else new_buf = malloc( new_size );
+    if( *buf ) delete *buf;
+    void * new_buf = new void * [ new_size ];
     if( !new_buf )
       {
       show_strerror( 0, errno );
