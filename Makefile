@@ -17,8 +17,8 @@ infodir = $(datarootdir)/info
 mandir = $(datarootdir)/man
 program_prefix = 
 CC = g++
-CPPFLAGS = 
-CFLAGS = -Wall
+CPPFLAGS = -Wall 
+CFLAGS =
 LDFLAGS = 
 
 DISTNAME = $(pkgname)-$(pkgversion)
