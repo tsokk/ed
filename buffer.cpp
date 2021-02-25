@@ -132,7 +132,7 @@ bool append_lines( const char ** const ibufpp, const int addr,
     if( up ) up->tail = search_line_node( current_addr_ );
     else
       {
-      up = push_undo_atom( UADD, current_addr_, current_addr_ );
+	up = push_undo_atom( undo_t::UADD, current_addr_, current_addr_ );
       if( !up ) { enable_interrupts(); return false; }
       }
     *ibufpp += size;
@@ -203,7 +203,7 @@ bool copy_lines( const int first_addr, const int second_addr, const int addr )
       if( up ) up->tail = lp;
       else
         {
-        up = push_undo_atom( UADD, current_addr_, current_addr_ );
+        up = push_undo_atom( undo_t::UADD, current_addr_, current_addr_ );
         if( !up ) { enable_interrupts(); return false; }
         }
       modified_ = true;
@@ -220,7 +220,7 @@ bool delete_lines( const int from, const int to, const bool isglobal )
 
   if( !yank_lines( from, to ) ) return false;
   disable_interrupts();
-  if( !push_undo_atom( UDEL, from, to ) )
+  if( !push_undo_atom( undo_t::UDEL, from, to ) )
     { enable_interrupts(); return false; }
   n = search_line_node( inc_addr( to ) );
   p = search_line_node( from - 1 );	/* this search_line_node last! */
@@ -321,7 +321,7 @@ bool join_lines( const int from, const int to, const bool isglobal )
   current_addr_ = from - 1;
   disable_interrupts();
   if( !put_sbuf_line( buf, size ) ||
-      !push_undo_atom( UADD, current_addr_, current_addr_ ) )
+      !push_undo_atom( undo_t::UADD, current_addr_, current_addr_ ) )
     { enable_interrupts(); return false; }
   modified_ = true;
   enable_interrupts();
@@ -344,8 +344,8 @@ bool move_lines( const int first_addr, const int second_addr, const int addr,
     b2 = search_line_node( p );
     current_addr_ = second_addr;
     }
-  else if( !push_undo_atom( UMOV, p, n ) ||
-           !push_undo_atom( UMOV, addr, inc_addr( addr ) ) )
+  else if( !push_undo_atom( undo_t::UMOV, p, n ) ||
+           !push_undo_atom( undo_t::UMOV, addr, inc_addr( addr ) ) )
     { enable_interrupts(); return false; }
   else
     {
@@ -419,7 +419,7 @@ bool put_lines( const int addr )
     if( up ) up->tail = p;
     else
       {
-      up = push_undo_atom( UADD, current_addr_, current_addr_ );
+      up = push_undo_atom( undo_t::UADD, current_addr_, current_addr_ );
       if( !up ) { enable_interrupts(); return false; }
       }
     modified_ = true;
@@ -528,7 +528,7 @@ static bool u_modified = false;
 void clear_undo_stack( void )
   {
   while( u_ptr-- )
-    if( ustack[u_ptr].type == UDEL )
+    if( ustack[u_ptr].type == undo_t::UDEL )
       {
       line_t * const ep = ustack[u_ptr].tail->q_forw;
       line_t * bp = ustack[u_ptr].head;
@@ -609,13 +609,13 @@ bool undo( const bool isglobal )
     {
     switch( ustack[n].type )
       {
-      case UADD: link_nodes( ustack[n].head->q_back, ustack[n].tail->q_forw );
+      case undo_t::UADD: link_nodes( ustack[n].head->q_back, ustack[n].tail->q_forw );
                  break;
-      case UDEL: link_nodes( ustack[n].head->q_back, ustack[n].head );
+      case undo_t::UDEL: link_nodes( ustack[n].head->q_back, ustack[n].head );
                  link_nodes( ustack[n].tail, ustack[n].tail->q_forw );
                  break;
-      case UMOV:
-      case VMOV: link_nodes( ustack[n-1].head, ustack[n].head->q_forw );
+      case undo_t::UMOV:
+      case undo_t::VMOV: link_nodes( ustack[n-1].head, ustack[n].head->q_forw );
                  link_nodes( ustack[n].tail->q_back, ustack[n-1].tail );
                  link_nodes( ustack[n].head, ustack[n].tail ); --n;
                  break;
