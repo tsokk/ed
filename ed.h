@@ -46,12 +46,8 @@ typedef struct {
   line_t *tail; /* tail of list */
 } undo_t;
 
-#ifndef max
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef min
-#define min(a, b) (((a) < (b)) ? (a) : (b))
-#endif
+constexpr int max(int a, int b) { return a > b ? a : b; };
+constexpr int min(int a, int b) { return a < b ? a : b; };
 
 static const char *const mem_msg = "Memory exhausted";
 
