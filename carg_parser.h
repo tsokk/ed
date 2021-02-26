@@ -43,48 +43,41 @@
 
 enum ap_Has_arg { ap_no, ap_yes, ap_maybe };
 
-struct ap_Option
-  {
-  int code;			/* Short option letter or code ( code != 0 ) */
-  const char * name;		/* Long option name (maybe null) */
+struct ap_Option {
+  int code;         /* Short option letter or code ( code != 0 ) */
+  const char *name; /* Long option name (maybe null) */
   enum ap_Has_arg has_arg;
-  };
+};
 
-
-struct ap_Record
-  {
+struct ap_Record {
   int code;
-  char * argument;
-  };
+  char *argument;
+};
 
-
-struct Arg_parser
-  {
-  struct ap_Record * data;
-  char * error;
+struct Arg_parser {
+  struct ap_Record *data;
+  char *error;
   int data_size;
   int error_size;
-  };
+};
 
+char ap_init(struct Arg_parser *const ap, const int argc,
+             const char *const argv[], const struct ap_Option options[],
+             const char in_order);
 
-char ap_init( struct Arg_parser * const ap,
-              const int argc, const char * const argv[],
-              const struct ap_Option options[], const char in_order );
+void ap_free(struct Arg_parser *const ap);
 
-void ap_free( struct Arg_parser * const ap );
-
-const char * ap_error( const struct Arg_parser * const ap );
+const char *ap_error(const struct Arg_parser *const ap);
 
 /* The number of arguments parsed. May be different from argc. */
-int ap_arguments( const struct Arg_parser * const ap );
+int ap_arguments(const struct Arg_parser *const ap);
 
 /* If ap_code( i ) is 0, ap_argument( i ) is a non-option.
    Else ap_argument( i ) is the option's argument (or empty). */
-int ap_code( const struct Arg_parser * const ap, const int i );
+int ap_code(const struct Arg_parser *const ap, const int i);
 
-const char * ap_argument( const struct Arg_parser * const ap, const int i );
+const char *ap_argument(const struct Arg_parser *const ap, const int i);
 
-char add_error( struct Arg_parser * const ap, const char * const msg );
-void * ap_resize_buffer( void * buf, const int min_size );
-void free_data( struct Arg_parser * const ap );
-
+char add_error(struct Arg_parser *const ap, const char *const msg);
+void *ap_resize_buffer(void *buf, const int min_size);
+void free_data(struct Arg_parser *const ap);

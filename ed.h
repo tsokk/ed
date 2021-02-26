@@ -26,184 +26,174 @@ enum Bool { false = 0, true = 1 };
 typedef enum Bool bool;
 #endif
 
-enum Pflags			/* print suffixes */
-  {
-  GLS = 0x01,			/* list after command */
-  GNP = 0x02,			/* enumerate after command */
-  GPR = 0x04			/* print after command */
-  };
+enum Pflags   /* print suffixes */
+{ GLS = 0x01, /* list after command */
+  GNP = 0x02, /* enumerate after command */
+  GPR = 0x04  /* print after command */
+};
 
+typedef struct line /* Line node */
+{
+  struct line *q_forw;
+  struct line *q_back;
+  long pos; /* position of text in scratch buffer */
+  int len;  /* length of line ('\n' is not stored) */
+} line_t;
 
-typedef struct line		/* Line node */
-  {
-  struct line * q_forw;
-  struct line * q_back;
-  long pos;			/* position of text in scratch buffer */
-  int len;			/* length of line ('\n' is not stored) */
-  }
-line_t;
-
-
-typedef struct
-  {
+typedef struct {
   enum { UADD = 0, UDEL = 1, UMOV = 2, VMOV = 3 } type;
-  line_t * head;			/* head of list */
-  line_t * tail;			/* tail of list */
-  }
-undo_t;
+  line_t *head; /* head of list */
+  line_t *tail; /* tail of list */
+} undo_t;
 
 #ifndef max
-#define max( a,b ) ( (( a ) > ( b )) ? ( a ) : ( b ) )
+#define max(a, b) (((a) > (b)) ? (a) : (b))
 #endif
 #ifndef min
-#define min( a,b ) ( (( a ) < ( b )) ? ( a ) : ( b ) )
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-static const char * const mem_msg = "Memory exhausted";
+static const char *const mem_msg = "Memory exhausted";
 
 /* defined in buffer.c */
-bool append_lines( const char ** const ibufpp, const int addr,
-                   bool insert, const bool isglobal );
-bool close_sbuf( void );
-bool copy_lines( const int first_addr, const int second_addr, const int addr );
-int current_addr( void );
-int dec_addr( int addr );
-bool delete_lines( const int from, const int to, const bool isglobal );
-int get_line_node_addr( const line_t * const lp );
-char * get_sbuf_line( const line_t * const lp );
-int inc_addr( int addr );
-int inc_current_addr( void );
-bool init_buffers( void );
-bool isbinary( void );
-bool join_lines( const int from, const int to, const bool isglobal );
-int last_addr( void );
-bool modified( void );
-bool move_lines( const int first_addr, const int second_addr, const int addr,
-                 const bool isglobal );
-bool open_sbuf( void );
-int path_max( const char * filename );
-bool put_lines( const int addr );
-const char * put_sbuf_line( const char * const buf, const int size );
-line_t * search_line_node( const int addr );
-void set_binary( void );
-void set_current_addr( const int addr );
-void set_modified( const bool m );
-bool yank_lines( const int from, const int to );
-void clear_undo_stack( void );
-undo_t * push_undo_atom( const int type, const int from, const int to );
-void reset_undo_state( void );
-bool undo( const bool isglobal );
-void link_nodes( line_t * const prev, line_t * const next );
-void insert_node( line_t * const lp, line_t * const prev );
-void add_line_node( line_t * const lp );
-line_t * dup_line_node( line_t * const lp );
+bool append_lines(const char **const ibufpp, const int addr, bool insert,
+                  const bool isglobal);
+bool close_sbuf(void);
+bool copy_lines(const int first_addr, const int second_addr, const int addr);
+int current_addr(void);
+int dec_addr(int addr);
+bool delete_lines(const int from, const int to, const bool isglobal);
+int get_line_node_addr(const line_t *const lp);
+char *get_sbuf_line(const line_t *const lp);
+int inc_addr(int addr);
+int inc_current_addr(void);
+bool init_buffers(void);
+bool isbinary(void);
+bool join_lines(const int from, const int to, const bool isglobal);
+int last_addr(void);
+bool modified(void);
+bool move_lines(const int first_addr, const int second_addr, const int addr,
+                const bool isglobal);
+bool open_sbuf(void);
+int path_max(const char *filename);
+bool put_lines(const int addr);
+const char *put_sbuf_line(const char *const buf, const int size);
+line_t *search_line_node(const int addr);
+void set_binary(void);
+void set_current_addr(const int addr);
+void set_modified(const bool m);
+bool yank_lines(const int from, const int to);
+void clear_undo_stack(void);
+undo_t *push_undo_atom(const int type, const int from, const int to);
+void reset_undo_state(void);
+bool undo(const bool isglobal);
+void link_nodes(line_t *const prev, line_t *const next);
+void insert_node(line_t *const lp, line_t *const prev);
+void add_line_node(line_t *const lp);
+line_t *dup_line_node(line_t *const lp);
 
 /* defined in global.c */
-void clear_active_list( void );
-const line_t * next_active_node( void );
-bool set_active_node( const line_t * const lp );
-void unset_active_nodes( const line_t * bp, const line_t * const ep );
+void clear_active_list(void);
+const line_t *next_active_node(void);
+bool set_active_node(const line_t *const lp);
+void unset_active_nodes(const line_t *bp, const line_t *const ep);
 
 /* defined in io.c */
-bool get_extended_line( const char ** const ibufpp, int * const lenp,
-                        const bool strip_escaped_newlines );
-const char * get_stdin_line( int * const sizep );
-int linenum( void );
-bool print_lines( int from, const int to, const int pflags );
-int read_file( const char * const filename, const int addr );
-int write_file( const char * const filename, const char * const mode,
-                const int from, const int to );
-void reset_unterminated_line( void );
-void unmark_unterminated_line( const line_t * const lp );
-bool unterminated_last_line( void );
-void print_line( const char * p, int len, const int pflags );
-bool trailing_escape( const char * const s, int len );
-const char * read_stream_line( const char * const filename,
-			       FILE * const fp, int * const sizep,
-			       bool * const newline_addedp );
-long read_stream( const char * const filename, FILE * const fp,
-		  const int addr );
-long write_stream( const char * const filename, FILE * const fp,
-		   int from, const int to );
+bool get_extended_line(const char **const ibufpp, int *const lenp,
+                       const bool strip_escaped_newlines);
+const char *get_stdin_line(int *const sizep);
+int linenum(void);
+bool print_lines(int from, const int to, const int pflags);
+int read_file(const char *const filename, const int addr);
+int write_file(const char *const filename, const char *const mode,
+               const int from, const int to);
+void reset_unterminated_line(void);
+void unmark_unterminated_line(const line_t *const lp);
+bool unterminated_last_line(void);
+void print_line(const char *p, int len, const int pflags);
+bool trailing_escape(const char *const s, int len);
+const char *read_stream_line(const char *const filename, FILE *const fp,
+                             int *const sizep, bool *const newline_addedp);
+long read_stream(const char *const filename, FILE *const fp, const int addr);
+long write_stream(const char *const filename, FILE *const fp, int from,
+                  const int to);
 
 /* defined in main.c */
-bool extended_regexp( void );
-bool is_regular_file( const int fd );
-bool may_access_filename( const char * const name );
-bool restricted( void );
-bool scripted( void );
-void show_strerror( const char * const filename, const int errcode );
-bool traditional( void );
-void show_help( void );
-void show_version( void );
-void show_error( const char * const msg, const int errcode, const bool help );
+bool extended_regexp(void);
+bool is_regular_file(const int fd);
+bool may_access_filename(const char *const name);
+bool restricted(void);
+bool scripted(void);
+void show_strerror(const char *const filename, const int errcode);
+bool traditional(void);
+void show_help(void);
+void show_version(void);
+void show_error(const char *const msg, const int errcode, const bool help);
 
 /* defined in main_loop.c */
-void invalid_address( void );
-int main_loop( const bool loose );
-bool set_def_filename( const char * const s );
-void set_error_msg( const char * const msg );
-bool set_prompt( const char * const s );
-void set_verbose( void );
-void unmark_line_node( const line_t * const lp );
-bool mark_line_node( const line_t * const lp, int c );
-int get_marked_node_addr( int c );
-const char * get_shell_command( const char ** const ibufpp );
-const char * skip_blanks( const char * p );
-const char * get_filename( const char ** const ibufpp,
-			   const bool traditional_f_command );
-bool parse_int( int * const i, const char * const str,
-		const char ** const tail );
-int extract_addresses( const char ** const ibufpp );
-bool get_third_addr( const char ** const ibufpp, int * const addr );
-bool check_addr_range( const int n, const int m, const int addr_cnt );
-bool check_addr_range2( const int addr_cnt );
-bool check_second_addr( const int addr, const int addr_cnt );
-bool get_command_suffix( const char ** const ibufpp,
-			 int * const pflagsp, int * const snump );
-bool unexpected_address( const int addr_cnt );
-bool unexpected_command_suffix( const unsigned char ch );
-bool command_s( const char ** const ibufpp, int * const pflagsp,
-		const int addr_cnt, const bool isglobal );
-int exec_global( const char ** const ibufpp, const int pflags,
-                        const bool interactive );
-int exec_command( const char ** const ibufpp, const int prev_status,
-		  const bool isglobal );
-void script_error( void );
+void invalid_address(void);
+int main_loop(const bool loose);
+bool set_def_filename(const char *const s);
+void set_error_msg(const char *const msg);
+bool set_prompt(const char *const s);
+void set_verbose(void);
+void unmark_line_node(const line_t *const lp);
+bool mark_line_node(const line_t *const lp, int c);
+int get_marked_node_addr(int c);
+const char *get_shell_command(const char **const ibufpp);
+const char *skip_blanks(const char *p);
+const char *get_filename(const char **const ibufpp,
+                         const bool traditional_f_command);
+bool parse_int(int *const i, const char *const str, const char **const tail);
+int extract_addresses(const char **const ibufpp);
+bool get_third_addr(const char **const ibufpp, int *const addr);
+bool check_addr_range(const int n, const int m, const int addr_cnt);
+bool check_addr_range2(const int addr_cnt);
+bool check_second_addr(const int addr, const int addr_cnt);
+bool get_command_suffix(const char **const ibufpp, int *const pflagsp,
+                        int *const snump);
+bool unexpected_address(const int addr_cnt);
+bool unexpected_command_suffix(const unsigned char ch);
+bool command_s(const char **const ibufpp, int *const pflagsp,
+               const int addr_cnt, const bool isglobal);
+int exec_global(const char **const ibufpp, const int pflags,
+                const bool interactive);
+int exec_command(const char **const ibufpp, const int prev_status,
+                 const bool isglobal);
+void script_error(void);
 
 /* defined in regex.c */
-bool build_active_list( const char ** const ibufpp, const int first_addr,
-                        const int second_addr, const bool match );
-bool extract_replacement( const char ** const ibufpp, const bool isglobal );
-int next_matching_node_addr( const char ** const ibufpp, const bool forward );
-bool search_and_replace( const int first_addr, const int second_addr,
-                         const int snum, const bool isglobal );
-bool set_subst_regex( const char ** const ibufpp );
-bool subst_regex( void );
-void translit_text( char * p, int len, const char from, const char to );
-void newline_to_nul( char * const s, const int len );
-void nul_to_newline( char * const s, const int len );
-const char * parse_char_class( const char * p );
-char * extract_pattern( const char ** const ibufpp, const char delimiter );
-regex_t * get_compiled_regex( const char ** const ibufpp,
-			      const bool test_delimiter );
-int replace_matched_text( char ** txtbufp, int * const txtbufszp,
-			  const char * const txt,
-			  const regmatch_t * const rm, int offset,
-			  const int re_nsub );
-int line_replace( char ** txtbufp, int * const txtbufszp,
-		  const line_t * const lp, const int snum );
+bool build_active_list(const char **const ibufpp, const int first_addr,
+                       const int second_addr, const bool match);
+bool extract_replacement(const char **const ibufpp, const bool isglobal);
+int next_matching_node_addr(const char **const ibufpp, const bool forward);
+bool search_and_replace(const int first_addr, const int second_addr,
+                        const int snum, const bool isglobal);
+bool set_subst_regex(const char **const ibufpp);
+bool subst_regex(void);
+void translit_text(char *p, int len, const char from, const char to);
+void newline_to_nul(char *const s, const int len);
+void nul_to_newline(char *const s, const int len);
+const char *parse_char_class(const char *p);
+char *extract_pattern(const char **const ibufpp, const char delimiter);
+regex_t *get_compiled_regex(const char **const ibufpp,
+                            const bool test_delimiter);
+int replace_matched_text(char **txtbufp, int *const txtbufszp,
+                         const char *const txt, const regmatch_t *const rm,
+                         int offset, const int re_nsub);
+int line_replace(char **txtbufp, int *const txtbufszp, const line_t *const lp,
+                 const int snum);
 
 /* defined in signal.c */
-void disable_interrupts( void );
-void enable_interrupts( void );
-bool resize_buffer( char ** const buf, int * const size, const int min_size );
-void set_signals( void );
-void set_window_lines( const int lines );
-const char * strip_escapes( const char * p );
-int window_columns( void );
-int window_lines( void );
-void sighup_handler( int signum );
-void sigint_handler( int signum );
-void sigwinch_handler( int signum );
-int set_signal( const int signum, void (*handler)( int ) );
+void disable_interrupts(void);
+void enable_interrupts(void);
+bool resize_buffer(char **const buf, int *const size, const int min_size);
+void set_signals(void);
+void set_window_lines(const int lines);
+const char *strip_escapes(const char *p);
+int window_columns(void);
+int window_lines(void);
+void sighup_handler(int signum);
+void sigint_handler(int signum);
+void sigwinch_handler(int signum);
+int set_signal(const int signum, void (*handler)(int));
