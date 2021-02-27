@@ -21,11 +21,6 @@
 
 #include <regex.h>
 
-#ifndef __cplusplus
-enum Bool { false = 0, true = 1 };
-typedef enum Bool bool;
-#endif
-
 enum Pflags   /* print suffixes */
 { GLS = 0x01, /* list after command */
   GNP = 0x02, /* enumerate after command */
