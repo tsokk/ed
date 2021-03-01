@@ -465,19 +465,20 @@ bool unexpected_command_suffix(const unsigned char ch) {
   return false;
 }
 
+enum Sflags {
+	SGG = 0x01, /* complement previous global substitute suffix */
+  SGP = 0x02, /* complement previous print suffix */
+  SGR = 0x04, /* use regex of last search (if newer) */
+  SGF = 0x08
+}; 
+
 bool command_s(const char **const ibufpp, int *const pflagsp,
                const int addr_cnt, const bool isglobal) {
   static int pflags = 0;  /* print suffixes */
   static int gmask = GPR; /* the print suffixes to be toggled */
   static int snum = 1;    /* > 0 count, <= 0 global substitute */
-  enum Sflags {
-    SGG = 0x01, /* complement previous global substitute suffix */
-    SGP = 0x02, /* complement previous print suffix */
-    SGR = 0x04, /* use regex of last search (if newer) */
-    SGF = 0x08
-  } sflags = 0; /* if sflags != 0, repeat last substitution */
-
-  if (!check_addr_range2(addr_cnt))
+	int sflags = 0; /* if sflags != 0, repeat last substitution */
+	if (!check_addr_range2(addr_cnt))
     return false;
   do {
     bool error = false;
