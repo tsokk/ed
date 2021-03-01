@@ -35,11 +35,13 @@ typedef struct line /* Line node */
   int len;  /* length of line ('\n' is not stored) */
 } line_t;
 
-typedef struct {
-  enum { UADD = 0, UDEL = 1, UMOV = 2, VMOV = 3 } type;
+typedef enum { UADD = 0, UDEL = 1, UMOV = 2, VMOV = 3 } TYPE;
+
+struct undo_t {
+	TYPE type;
   line_t *head; /* head of list */
   line_t *tail; /* tail of list */
-} undo_t;
+};
 
 constexpr int max(int a, int b) { return a > b ? a : b; };
 constexpr int min(int a, int b) { return a < b ? a : b; };
